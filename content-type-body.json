@@ -1,0 +1,77 @@
+{
+  "components": [],
+  "contentType": {
+    "displayName": "Test",
+    "singularName": "test",
+    "pluralName": "tests",
+    "description": "",
+    "draftAndPublish": true,
+    "pluginOptions": {},
+    "kind": "collectionType",
+    "collectionName": "tests",
+    "attributes": {
+      "shortText": {
+        "type": "string",
+        "required": true,
+        "maxLength": 255,
+        "private": true,
+        "minLength": 1,
+        "unique": true,
+        "default": "1",
+        "regex": "^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}[\\s.-]\\d{4}$"
+      },
+      "longText": {
+        "type": "text",
+        "required": true,
+        "maxLength": 1000000,
+        "minLength": 1000,
+        "private": true
+      },
+      "email": { "type": "email" },
+      "richText": { "type": "richtext" },
+      "password": { "type": "password" },
+      "integer": {
+        "type": "integer",
+        "private": true,
+        "max": 32324,
+        "min": 1,
+        "unique": false,
+        "required": true,
+        "default": 232
+      },
+      "bigint": { "type": "biginteger" },
+      "decimal": { "type": "decimal" },
+      "float": { "type": "float" },
+      "enum": {
+        "type": "enumeration",
+        "enum": ["morning", "afternoon", "evening"]
+      },
+      "date": { "type": "date" },
+      "datetime": { "type": "datetime" },
+      "time": { "type": "time" },
+      "single": {
+        "type": "media",
+        "multiple": false,
+        "required": false,
+        "allowedTypes": ["images", "files", "videos", "audios"]
+      },
+      "multiple": {
+        "type": "media",
+        "multiple": true,
+        "required": false,
+        "allowedTypes": ["images", "files", "videos", "audios"]
+      },
+      "boolean": { "type": "boolean" },
+      "json": { "type": "json" },
+      "users_permissions_user": {
+        "type": "relation",
+        "relation": "manyToOne",
+        "target": "plugin::users-permissions.user",
+        "inversedBy": "tests",
+        "targetAttribute": "tests",
+        "private": false
+      },
+      "uid": { "type": "uid", "targetField": "longText" }
+    }
+  }
+}

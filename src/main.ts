@@ -1,3 +1,5 @@
+import * as dotenv from 'dotenv';
+dotenv.config({ override: true });
 import * as moduleAlias from 'module-alias';
 moduleAlias.addAliases({
   '@modules': `${__dirname}/modules`,
@@ -17,6 +19,14 @@ import {
 import { AppModule } from 'src/app.module';
 import { PrismaService } from 'src/infra/prisma/prisma.service';
 import { setupSwagger } from 'src/setup-swagger';
+import path from 'path';
+
+console.log(__dirname);
+// set default root folder path
+process.env.ROOT_FOLDER =
+  process.env.ROOT_FOLDER ?? __dirname.replace('/dist/src', '');
+console.log(process.env.ROOT_FOLDER);
+
 const PORT = process.env.PORT || 1999;
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

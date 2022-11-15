@@ -8,6 +8,33 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model Test {
+  id          String    @id @default(uuid()) @db.Uuid()
+  shortText   String    @unique @default("1") @db.VarChar(255)
+  longText    String    @db.Text
+  richText    String?   @db.Text
+  password    String?   @db.VarChar(255)
+  integer     Int       @default(232)
+  bigint      BigInt?
+  decimal     Decimal?  @db.Decimal(10, 2)
+  float       Float?
+  date        DateTime? @db.Date
+  datetime    DateTime? @db.Timestamp()
+  time        DateTime? @db.Time()
+  boolean     Boolean?
+  json        Boolean?
+  enum        TestEnum?
+  createdAt   DateTime  @default(now()) @db.Timestamptz()
+  createdById String?   @db.Uuid()
+  createdBy   String?
+  updatedAt   DateTime  @updatedAt @db.Timestamptz()
+  updatedById String?   @db.Uuid()
+  updatedBy   String?
+  deletedAt   DateTime? @db.Timestamptz()
+  deletedById String?   @db.Uuid()
+  deletedBy   String?
+}
+
 model AdminUser {
   id                 String                    @id @default(uuid()) @db.Uuid()
   username           String                    @unique @db.VarChar(100)
@@ -75,6 +102,7 @@ model AdminRole {
   name        String            @db.VarChar(100)
   code        String            @unique @db.VarChar(100)
   description String?           @db.VarChar(100)
+  isSystem    Boolean           @default(false)
   createdAt   DateTime          @default(now()) @db.Timestamptz()
   createdById String?           @db.Uuid()
   createdBy   String?
@@ -94,6 +122,7 @@ model AdminPermission {
   subject     String?     @db.VarChar(100)
   properties  Json?       @db.JsonB
   conditions  Json?       @db.JsonB
+  isSystem    Boolean     @default(false)
   createdAt   DateTime    @default(now()) @db.Timestamptz()
   createdById String?     @db.Uuid()
   createdBy   String?
@@ -104,6 +133,12 @@ model AdminPermission {
   deletedById String?     @db.Uuid()
   deletedBy   String?
   roles       AdminRole[] @relation("PermissionAdminRoleRelation")
+}
+
+enum TestEnum {
+  morning
+  afternoon
+  evening
 }
 
 enum UserAttributeType {
