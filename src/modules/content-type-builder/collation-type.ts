@@ -136,7 +136,6 @@ export type CollationTypeAttribute =
 
 export class CollationType {
   public uid: string;
-  public modelName: string;
   public collectionName: string;
   public info: CollationTypeInfo;
   public options: CollationTypeOptions;

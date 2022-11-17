@@ -1,3 +1,4 @@
+
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import {
@@ -6,7 +7,7 @@ import {
   toDto,
   HttpErrorException,
 } from '@moonlightjs/common';
-import { PrismaService } from 'src/infra/prisma/prisma.service';
+import { PrismaService } from '@src/infra/prisma/prisma.service';
 import { TestDto } from './dto/test.dto';
 import { UpdateTestInput } from './dto/update-test.input';
 import { CreateTestInput } from './dto/create-test.input';
@@ -16,9 +17,11 @@ const DEFAULT_TAKE = 20;
 
 @Injectable()
 export class TestService {
-  constructor(protected prisma: PrismaService) {}
+  constructor(
+    protected prisma: PrismaService
+  ) {}
 
-  async findOne(params: Prisma.TestFindFirstArgs): Promise<TestDto> {
+  async findOne(params: Prisma.TestFindFirstArgs) : Promise<TestDto> {
     const test = await this.prisma.test.findFirst(params);
     return toDto<TestDto>(TestDto, test);
   }

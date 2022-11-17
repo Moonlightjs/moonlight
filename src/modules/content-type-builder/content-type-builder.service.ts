@@ -1,9 +1,8 @@
 import {
+  CollationType,
   CollationTypeAttribute,
   CollationTypeAttributeBoolean,
-  CollationTypeAttributeCommon,
   CollationTypeAttributeString,
-  CollationTypeAttributeType,
 } from '@modules/content-type-builder/collation-type';
 import { CreateContentTypeBuilderInput } from '@modules/content-type-builder/dto/create-content-type-builder.input';
 import { BadRequestException, Injectable } from '@nestjs/common';
@@ -18,12 +17,15 @@ import {
   CollationTypeAttributeDecimal,
 } from './collation-type';
 import { exec, spawn } from 'child_process';
+import { PrismaService } from '@src/infra/prisma/prisma.service';
+import * as path from 'path';
 @Injectable()
 export class ContentTypeBuilderService {
-  create(input: CreateContentTypeBuilderInput) {
+  constructor(protected prisma: PrismaService) {}
+  async create(input: CreateContentTypeBuilderInput) {
     generateContentTypeSchema(input);
     generateContentTypeModule(input);
-    const rootFolder = process.env.ROOT_FOLDER;
+    const rootFolder = process.env.ROOT_FOLDER as string;
     exec(`cd ${rootFolder} && npm run aurora`, (error, stdout, stderr) => {
       console.log(stdout);
       console.log(stderr);
@@ -57,15 +59,115 @@ export class ContentTypeBuilderService {
 
     shell.on('close', (code) => {
       console.log('[shell] terminated :', code);
+      const appModulePath = path.join(rootFolder, 'src/app.module.ts');
+      let appModuleContent = fs.readFileSync(appModulePath, {
+        encoding: 'utf8',
+      });
+      const importStr = `import { ${pascalCase(
+        input.displayName,
+      )}Module } from '@content-type/${paramCase(
+        input.displayName,
+      )}/${paramCase(input.displayName)}.module';`;
+      const moduleName = `${pascalCase(input.displayName)}Module`;
+      if (!appModuleContent.includes(moduleName)) {
+        const regex = /@Module\({\n  imports: \[([a-zA-Z0-9,\s.()]*)\]/gm;
+        const m = regex.exec(appModuleContent);
+        if (m && m.length > 1) {
+          const text = m[1];
+          appModuleContent =
+            appModuleContent.slice(
+              0,
+              appModuleContent.indexOf(text) + text.length,
+            ) +
+            '    ' +
+            moduleName +
+            ',\n' +
+            appModuleContent.slice(
+              appModuleContent.indexOf(text) + text.length,
+            );
+        }
+      }
+      if (!appModuleContent.includes(importStr)) {
+        const regex = /import [a-zA-Z0-9, .(){}''""@\/\-_]*;/gm;
+        let m;
+        let t;
+
+        while ((m = regex.exec(appModuleContent)) !== null) {
+          // This is necessary to avoid infinite loops with zero-width matches
+          t = m;
+          if (m.index === regex.lastIndex) {
+            regex.lastIndex++;
+          }
+        }
+        if (t) {
+          appModuleContent =
+            appModuleContent.slice(
+              0,
+              appModuleContent.indexOf(t[0]) + t[0].length,
+            ) +
+            '\n' +
+            importStr +
+            appModuleContent.slice(
+              appModuleContent.indexOf(t[0]) + t[0].length,
+            );
+        }
+      }
+      console.log(appModuleContent);
+      fs.writeFileSync(`${appModulePath}`, appModuleContent, {
+        encoding: 'utf-8',
+      });
+
+      exec(`cd ${rootFolder} && npm run format`, (error, stdout, stderr) => {
+        console.log(stdout);
+        console.log(stderr);
+        if (error !== null) {
+          console.log(`exec error: ${error}`);
+        }
+      });
     });
 
-    exec(`cd ${rootFolder} && npm run format`, (error, stdout, stderr) => {
-      console.log(stdout);
-      console.log(stderr);
-      if (error !== null) {
-        console.log(`exec error: ${error}`);
-      }
-    });
+    let data = await this.prisma.contentType.findFirst();
+    let contentTypesSchema: Record<string, CollationType>;
+    if (data && data.contentTypesSchema) {
+      contentTypesSchema = data.contentTypesSchema as unknown as Record<
+        string,
+        CollationType
+      >;
+    } else {
+      contentTypesSchema = {};
+    }
+    const uid = `api:${camelCase(input.displayName)}`;
+    contentTypesSchema[uid] = {
+      attributes: input.attributes,
+      collectionName: input.collectionName,
+      info: {
+        description: input.description,
+        displayName: input.displayName,
+        pluralName: input.pluralName,
+        singularName: input.singularName,
+      },
+      options: {
+        draftAndPublish: input.draftAndPublish,
+      },
+      uid,
+    };
+    if (data) {
+      await this.prisma.contentType.update({
+        where: {
+          id: data.id,
+        },
+        data: {
+          contentTypesSchema: contentTypesSchema as any,
+        },
+      });
+    } else {
+      data = await this.prisma.contentType.create({
+        data: {
+          contentTypesSchema: contentTypesSchema as any,
+        },
+      });
+    }
+    return data;
   }
 }
 
@@ -125,6 +227,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  binaryTargets = ["native"]
 }
 ${enumTxt}
 
@@ -419,6 +522,7 @@ const generateContentTypeModuleContent = (
   input: CreateContentTypeBuilderInput,
 ) => {
   const template = `import { Module } from '@nestjs/common';
+import { PrismaService } from '@src/infra/prisma/prisma.service';
 import { ${pascalCase(input.displayName)}Service } from './${paramCase(
     input.displayName,
   )}.service';
@@ -428,7 +532,7 @@ import { ${pascalCase(input.displayName)}Controller } from './${paramCase(
 
 @Module({
   controllers: [${pascalCase(input.displayName)}Controller],
-  providers: [${pascalCase(input.displayName)}Service],
+  providers: [${pascalCase(input.displayName)}Service, PrismaService],
   exports: [${pascalCase(input.displayName)}Service],
 })
 export class ${pascalCase(input.displayName)}Module {}
@@ -609,7 +713,7 @@ import {
   toDto,
   HttpErrorException,
 } from '@moonlightjs/common';
-import { PrismaService } from 'src/infra/prisma/prisma.service';
+import { PrismaService } from '@src/infra/prisma/prisma.service';
 import { ${pascalCase(input.displayName)}Dto } from './dto/${paramCase(
     input.displayName,
   )}.dto';
@@ -827,7 +931,7 @@ const generateContentTypeCreateInputContent = (
         : ''
     }})
 ${generateValidateType(attribute, attributeName, input.displayName)}
-${attribute.required ? '@IsOptional()' : ''}
+${attribute.required ? '' : '@IsOptional()'}
 @Expose()
 public readonly ${attributeName}: ${generateTypescriptType(
       attribute,

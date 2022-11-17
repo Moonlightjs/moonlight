@@ -10,6 +10,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { PrismaService } from 'src/infra/prisma/prisma.service';
 import { ContentTypeBuilderModule } from './modules/content-type-builder/content-type-builder.module';
 import { ConfigModule } from '@nestjs/config';
+import { TestModule } from '@content-type/test/test.module';
+import { DemoModule } from '@content-type/demo/demo.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { ConfigModule } from '@nestjs/config';
     AdminAuthorizationModule,
     AdminUserModule,
     ContentTypeBuilderModule,
+    TestModule,
+    DemoModule,
   ],
   controllers: [AppController],
   providers: [

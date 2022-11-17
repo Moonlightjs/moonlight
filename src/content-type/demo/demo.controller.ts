@@ -27,36 +27,36 @@ import {
   FindOneArgs,
   SuccessResponseDto,
 } from '@moonlightjs/common';
-import { TestDto } from './dto/test.dto';
-import { TestService } from './test.service';
-import { UpdateTestInput } from './dto/update-test.input';
-import { CreateTestInput } from './dto/create-test.input';
+import { DemoDto } from './dto/demo.dto';
+import { DemoService } from './demo.service';
+import { UpdateDemoInput } from './dto/update-demo.input';
+import { CreateDemoInput } from './dto/create-demo.input';
 
-@ApiTags('Test')
+@ApiTags('Demo')
 @Controller({
-  path: 'test',
+  path: 'demo',
   version: '1',
 })
 // @UseGuards(JwtAuthGuard)
-export class TestController {
-  constructor(protected readonly testService: TestService) {}
+export class DemoController {
+  constructor(protected readonly demoService: DemoService) {}
 
   @ApiBody({
-    type: CreateTestInput,
+    type: CreateDemoInput,
   })
   @OpenApiResponse({
     status: HttpStatus.CREATED,
-    model: TestDto,
+    model: DemoDto,
   })
   @Post()
   create(
-    @Body() createTestInput: CreateTestInput,
-    @Query() params: Omit<Prisma.TestCreateArgs, 'data'>,
+    @Body() createDemoInput: CreateDemoInput,
+    @Query() params: Omit<Prisma.DemoCreateArgs, 'data'>,
   ) {
-    return this.testService.create({
+    return this.demoService.create({
       ...params,
       data: {
-        ...createTestInput
+        ...createDemoInput
       },
     });
   }
@@ -66,52 +66,52 @@ export class TestController {
   })
   @OpenApiResponse({
     status: HttpStatus.OK,
-    model: TestDto,
+    model: DemoDto,
     isArray: true,
   })
   @Get()
-  findAll(@Query() params: Prisma.TestFindManyArgs) {
-    return this.testService.findAll(params);
+  findAll(@Query() params: Prisma.DemoFindManyArgs) {
+    return this.demoService.findAll(params);
   }
 
   @ApiQuery({
     type: FindManyArgs,
   })
-  @OpenApiPaginationResponse(TestDto)
+  @OpenApiPaginationResponse(DemoDto)
   @Get('/pagination')
-  findAllPagination(@Query() params: Prisma.TestFindManyArgs) {
-    return this.testService.findAllPagination(params);
+  findAllPagination(@Query() params: Prisma.DemoFindManyArgs) {
+    return this.demoService.findAllPagination(params);
   }
 
   @ApiQuery({
     type: FindOneArgs,
   })
-  @OpenApiResponse({ status: HttpStatus.OK, model: TestDto })
+  @OpenApiResponse({ status: HttpStatus.OK, model: DemoDto })
   @Get(':id')
   findOne(
     @Param('id') id: string,
-    @Query() params: Prisma.TestFindUniqueArgs,
+    @Query() params: Prisma.DemoFindUniqueArgs,
   ) {
     params.where = {
       id,
     };
-    return this.testService.findOne(params);
+    return this.demoService.findOne(params);
   }
 
-  @OpenApiResponse({ status: HttpStatus.OK, model: TestDto })
+  @OpenApiResponse({ status: HttpStatus.OK, model: DemoDto })
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() updateTestInput: UpdateTestInput,
-    @Query() params: Omit<Prisma.TestUpdateArgs, 'data' | 'where'>,
+    @Body() updateDemoInput: UpdateDemoInput,
+    @Query() params: Omit<Prisma.DemoUpdateArgs, 'data' | 'where'>,
   ) {
-    return this.testService.update({
+    return this.demoService.update({
       ...params,
       where: {
         id,
       },
       data: {
-        ...updateTestInput,
+        ...updateDemoInput,
       },
     });
   }
@@ -119,7 +119,7 @@ export class TestController {
   @ApiResponse({ status: HttpStatus.OK, type: SuccessResponseDto })
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.testService.remove({
+    return this.demoService.remove({
       id,
     });
   }

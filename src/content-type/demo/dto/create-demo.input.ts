@@ -18,10 +18,10 @@ import {
   Min,
   MinLength
 } from 'class-validator';
-import { TestEnumEnum, } from './test.dto';
+import { DemoEnumEnum, } from './demo.dto';
 
 @Expose()
-export class CreateTestInput {
+export class CreateDemoInput {
   
 @ApiProperty({ type: 'string',required: true, nullable: true, })
 @Matches(/^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/)
@@ -126,10 +126,10 @@ public readonly boolean: Nullable<boolean>;
 public readonly json: Nullable<any>;
 
 
-@ApiProperty({ type: 'string',required: false, nullable: false,  enum: TestEnumEnum})
-@IsEnum(TestEnumEnum)
+@ApiProperty({ type: 'string',required: false, nullable: false,  enum: DemoEnumEnum})
+@IsEnum(DemoEnumEnum)
 @IsOptional()
 @Expose()
-public readonly enum: Nullable<TestEnumEnum>;
+public readonly enum: Nullable<DemoEnumEnum>;
 
 }

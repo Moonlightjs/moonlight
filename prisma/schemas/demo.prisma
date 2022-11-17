@@ -10,13 +10,13 @@ generator client {
 }
 
 
-enum TestEnum {
+enum DemoEnum {
   morning
   afternoon
   evening
 }
 
-model Test {
+model Demo {
   id String @id @default(uuid()) @db.Uuid()
     
   shortText  String @db.VarChar(255) @unique @default("1")
@@ -32,7 +32,7 @@ model Test {
   time  DateTime? @db.Time()
   boolean  Boolean? 
   json  Json? @db.JsonB
-  enum  TestEnum? 
+  enum  DemoEnum? 
 
   createdAt          DateTime                  @default(now()) @db.Timestamptz()
   createdById        String?                   @db.Uuid()
