@@ -91,24 +91,20 @@ export type CollationTypeAttributeCommon =
   | CollationTypeAttributeBoolean
   | CollationTypeAttributeEnumeration;
 
-export type RelationType =
-  | 'hasOne'
-  | 'oneToOne'
-  | 'manyToOne'
-  | 'oneToMany'
-  | 'manyToMany';
+export type RelationType = 'hasOne' | 'manyToOne' | 'oneToMany' | 'manyToMany';
 
 export class CollationTypeAttributeRelationBase extends CollationTypeAttributeBase {
   public type: CollationTypeAttributeTypeRelation;
   public relation: RelationType;
   public target: string;
+  public targetAttribute: string;
 }
 
-export class CollationTypeAttributeRelationInverse extends CollationTypeAttributeBase {
+export class CollationTypeAttributeRelationInverse extends CollationTypeAttributeRelationBase {
   public inversedBy: string;
 }
 
-export class CollationTypeAttributeRelationMapped extends CollationTypeAttributeBase {
+export class CollationTypeAttributeRelationMapped extends CollationTypeAttributeRelationBase {
   public mappedBy: string;
 }
 

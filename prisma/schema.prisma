@@ -25,6 +25,7 @@ model Demo {
   boolean     Boolean?
   json        Json?     @db.JsonB
   enum        DemoEnum?
+  tests       Test[]
   createdAt   DateTime  @default(now()) @db.Timestamptz()
   createdById String?   @db.Uuid()
   createdBy   String?
@@ -38,20 +39,22 @@ model Demo {
 
 model Test {
   id          String    @id @default(uuid()) @db.Uuid()
-  shortText   String    @unique @default("1") @db.VarChar(255)
-  longText    String    @db.Text
-  richText    String?   @db.Text
-  password    String?   @db.VarChar(255)
-  integer     Int       @default(232)
-  bigint      BigInt?
-  decimal     Decimal?  @db.Decimal(10, 2)
-  float       Float?
   date        DateTime? @db.Date
-  datetime    DateTime? @db.Timestamp()
-  time        DateTime? @db.Time()
-  boolean     Boolean?
-  json        Json?     @db.JsonB
+  demoId      String?   @db.Uuid()
+  demo        Demo?     @relation(fields: [demoId], references: [id])
   enum        TestEnum?
+  json        Json?     @db.JsonB
+  time        DateTime? @db.Time()
+  float       Float?
+  bigint      BigInt?
+  boolean     Boolean?
+  decimal     Decimal?  @db.Decimal(10, 2)
+  integer     Int       @default(232)
+  datetime    DateTime? @db.Timestamp()
+  longText    String    @db.Text
+  password    String?   @db.VarChar(255)
+  richText    String?   @db.Text
+  shortText   String    @unique @default("1") @db.VarChar(255)
   createdAt   DateTime  @default(now()) @db.Timestamptz()
   createdById String?   @db.Uuid()
   createdBy   String?
