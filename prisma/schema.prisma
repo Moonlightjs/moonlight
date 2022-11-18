@@ -25,7 +25,8 @@ model Demo {
   boolean     Boolean?
   json        Json?     @db.JsonB
   enum        DemoEnum?
-  tests       Test[]
+  testId      String?   @db.Uuid()
+  tests       Test?     @relation(fields: [testId], references: [id])
   createdAt   DateTime  @default(now()) @db.Timestamptz()
   createdById String?   @db.Uuid()
   createdBy   String?
@@ -40,8 +41,7 @@ model Demo {
 model Test {
   id          String    @id @default(uuid()) @db.Uuid()
   date        DateTime? @db.Date
-  demoId      String?   @db.Uuid()
-  demo        Demo?     @relation(fields: [demoId], references: [id])
+  demo        Demo[]
   enum        TestEnum?
   json        Json?     @db.JsonB
   time        DateTime? @db.Time()

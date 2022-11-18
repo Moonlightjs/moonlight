@@ -91,7 +91,11 @@ export type CollationTypeAttributeCommon =
   | CollationTypeAttributeBoolean
   | CollationTypeAttributeEnumeration;
 
-export type RelationType = 'hasOne' | 'manyToOne' | 'oneToMany' | 'manyToMany';
+export type RelationType =
+  | 'oneToOne'
+  | 'manyToOne'
+  | 'oneToMany'
+  | 'manyToMany';
 
 export class CollationTypeAttributeRelationBase extends CollationTypeAttributeBase {
   public type: CollationTypeAttributeTypeRelation;
