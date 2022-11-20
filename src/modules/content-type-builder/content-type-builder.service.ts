@@ -37,6 +37,7 @@ export class ContentTypeBuilderService {
       },
       options: {
         draftAndPublish: input.draftAndPublish,
+        softDelete: input.softDelete,
       },
       uid,
     };

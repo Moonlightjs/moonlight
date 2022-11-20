@@ -1,0 +1,11 @@
+{
+  "cSpell.words": [
+    "Casl",
+    "nestjs",
+    "Teldata",
+    "Telldata"
+  ],
+  "javascript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "prettier.configPath": ".prettierrc"
+}

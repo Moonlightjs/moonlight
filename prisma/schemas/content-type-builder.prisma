@@ -36,16 +36,16 @@ model Demo {
   enum  DemoEnum? 
 testId        String?   @db.Uuid()
       tests Test? @relation(fields: [testId], references: [id])
-
+  
+  publishedAt          DateTime?                 @db.Timestamptz()
+publishedById        String?                   @db.Uuid()
+publishedBy          String?
   createdAt          DateTime                  @default(now()) @db.Timestamptz()
   createdById        String?                   @db.Uuid()
   createdBy          String?
   updatedAt          DateTime                  @updatedAt @db.Timestamptz()
   updatedById        String?                   @db.Uuid()
   updatedBy          String?
-  deletedAt          DateTime?                 @db.Timestamptz()
-  deletedById        String?                   @db.Uuid()
-  deletedBy          String?
 }
 
 
@@ -74,15 +74,15 @@ demo Demo[]
   password  String? @db.VarChar(255)
   richText  String? @db.Text
   shortText  String @db.VarChar(255) @unique @default("1")
-
+  
+  publishedAt          DateTime?                 @db.Timestamptz()
+publishedById        String?                   @db.Uuid()
+publishedBy          String?
   createdAt          DateTime                  @default(now()) @db.Timestamptz()
   createdById        String?                   @db.Uuid()
   createdBy          String?
   updatedAt          DateTime                  @updatedAt @db.Timestamptz()
   updatedById        String?                   @db.Uuid()
   updatedBy          String?
-  deletedAt          DateTime?                 @db.Timestamptz()
-  deletedById        String?                   @db.Uuid()
-  deletedBy          String?
 }
 

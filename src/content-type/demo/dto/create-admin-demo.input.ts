@@ -20,9 +20,23 @@ import {
 } from 'class-validator';
 
 import { DemoEnumEnum } from './admin-demo.dto';
-import { TestCreateNested } from './create-admin-demo.input';
+
+export class TestId {
+  @ApiProperty({ required: true })
+  @IsUUID()
+  @IsNotEmpty()
+  public readonly id: string;
+}
+
+export class TestCreateNested {
+  @ApiProperty({ required: true })
+  @ValidateNested()
+  @Type(() => TestId)
+  public readonly connect: TestId;
+}
+
 @Expose()
-export class CreateDemoInput {
+export class CreateAdminDemoInput {
   @ApiProperty({ type: 'string', required: true, nullable: true })
   @Matches(/^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/)
   @IsNotEmpty()

@@ -6,6 +6,7 @@ export class CreateContentTypeBuilderInput {
   public readonly displayName: string;
   public readonly description: string;
   public readonly draftAndPublish: boolean;
+  public readonly softDelete: boolean;
   public readonly collectionName: string;
   public readonly attributes: Record<string, CollationTypeAttribute>;
 }

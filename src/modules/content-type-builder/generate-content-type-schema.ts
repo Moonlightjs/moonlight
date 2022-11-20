@@ -102,16 +102,25 @@ model ${pascalCase(contentType.collectionName)} {
   id String @id @default(uuid()) @db.Uuid()
     
 ${schemaAttribute}
-
+  ${
+    contentType.options.draftAndPublish
+      ? `\n  publishedAt          DateTime?                 @db.Timestamptz()
+publishedById        String?                   @db.Uuid()
+publishedBy          String?`
+      : ''
+  }
   createdAt          DateTime                  @default(now()) @db.Timestamptz()
   createdById        String?                   @db.Uuid()
   createdBy          String?
   updatedAt          DateTime                  @updatedAt @db.Timestamptz()
   updatedById        String?                   @db.Uuid()
-  updatedBy          String?
-  deletedAt          DateTime?                 @db.Timestamptz()
-  deletedById        String?                   @db.Uuid()
-  deletedBy          String?
+  updatedBy          String?${
+    contentType.options.softDelete
+      ? `\n  deletedAt          DateTime?                 @db.Timestamptz()
+deletedById        String?                   @db.Uuid()
+deletedBy          String?`
+      : ''
+  }
 }
 `;
   return schemaTemplate;

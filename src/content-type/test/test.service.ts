@@ -18,21 +18,28 @@ const DEFAULT_TAKE = 20;
 export class TestService {
   constructor(protected prisma: PrismaService) {}
 
-  async findOne(params: Prisma.TestFindFirstArgs): Promise<TestDto> {
+  async findOne<TDto = any>(
+    params: Prisma.TestFindFirstArgs,
+    dtoType = TestDto,
+  ): Promise<TDto> {
     const test = await this.prisma.test.findFirst(params);
-    return toDto<TestDto>(TestDto, test);
+    return toDto<TDto>(dtoType, test);
   }
 
-  async findAll(params: Prisma.TestFindManyArgs): Promise<TestDto[]> {
+  async findAll<TDto = any>(
+    params: Prisma.TestFindManyArgs,
+    dtoType = TestDto,
+  ): Promise<TDto[]> {
     params.skip = params.skip ?? DEFAULT_SKIP;
     params.take = params.take ?? DEFAULT_TAKE;
     const tests = await this.prisma.test.findMany(params);
-    return tests.map((test) => toDto<TestDto>(TestDto, test));
+    return tests.map((test) => toDto<TDto>(dtoType, test));
   }
 
-  async findAllPagination(
+  async findAllPagination<TDto = any>(
     params: Prisma.TestFindManyArgs,
-  ): Promise<PagedResultDto<TestDto>> {
+    dtoType = TestDto,
+  ): Promise<PagedResultDto<TDto>> {
     params.skip = params.skip ?? DEFAULT_SKIP;
     params.take = params.take ?? DEFAULT_TAKE;
     const [tests, total] = await Promise.all([
@@ -42,7 +49,7 @@ export class TestService {
       }),
     ]);
     return PagedResultDto.create({
-      data: tests.map((test) => toDto<TestDto>(TestDto, test)),
+      data: tests.map((test) => toDto<TDto>(dtoType, test)),
       pagination: Pagination.create({
         take: params.take,
         skip: params.skip,
@@ -51,14 +58,20 @@ export class TestService {
     });
   }
 
-  async create(params: Prisma.TestCreateArgs): Promise<TestDto> {
+  async create<TDto = any>(
+    params: Prisma.TestCreateArgs,
+    dtoType = TestDto,
+  ): Promise<TDto> {
     const test = await this.prisma.test.create(params);
-    return toDto<TestDto>(TestDto, test);
+    return toDto<TDto>(dtoType, test);
   }
 
-  async update(params: Prisma.TestUpdateArgs): Promise<TestDto> {
+  async update<TDto = any>(
+    params: Prisma.TestUpdateArgs,
+    dtoType = TestDto,
+  ): Promise<TDto> {
     const test = await this.prisma.test.update(params);
-    return toDto<TestDto>(TestDto, test);
+    return toDto<TDto>(dtoType, test);
   }
 
   async remove(where: Prisma.TestWhereUniqueInput): Promise<boolean> {

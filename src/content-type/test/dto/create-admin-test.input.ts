@@ -20,9 +20,23 @@ import {
 } from 'class-validator';
 
 import { TestEnumEnum } from './admin-test.dto';
-import { DemoCreateNested } from './create-admin-test.input';
+
+export class DemoId {
+  @ApiProperty({ required: true })
+  @IsUUID()
+  @IsNotEmpty()
+  public readonly id: string;
+}
+
+export class DemoCreateNested {
+  @ApiProperty({ required: true })
+  @ValidateNested()
+  @Type(() => DemoId)
+  public readonly connect: DemoId[];
+}
+
 @Expose()
-export class CreateTestInput {
+export class CreateAdminTestInput {
   @ApiProperty({ type: 'string', required: false, nullable: false })
   @IsDateStringISO()
   @IsOptional()

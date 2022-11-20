@@ -2,26 +2,13 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Nullable } from '@moonlightjs/common';
 import { Expose, Type } from 'class-transformer';
 import { TestDto } from '@content-type/test/dto/test.dto';
-
-export enum DemoEnumEnum {
-  MORNING = 'morning',
-  AFTERNOON = 'afternoon',
-  EVENING = 'evening',
-}
+import { DemoEnumEnum } from './admin-demo.dto';
 
 @Expose()
 export class DemoDto {
   @ApiProperty({ type: 'string', required: true })
   @Expose()
   public readonly id: string;
-
-  @ApiProperty({ type: 'string', required: true, nullable: true })
-  @Expose()
-  public readonly shortText: string;
-
-  @ApiProperty({ type: 'string', required: true, nullable: true })
-  @Expose()
-  public readonly longText: string;
 
   @ApiProperty({ type: 'string', required: false, nullable: false })
   @Expose()
@@ -30,10 +17,6 @@ export class DemoDto {
   @ApiProperty({ type: 'string', required: false, nullable: false })
   @Expose()
   public readonly password: Nullable<string>;
-
-  @ApiProperty({ type: 'number', required: true, nullable: true })
-  @Expose()
-  public readonly integer: number;
 
   @ApiProperty({ type: 'number', required: false, nullable: false })
   @Expose()
@@ -80,32 +63,4 @@ export class DemoDto {
   @Type(() => TestDto)
   @Expose()
   public readonly tests: TestDto;
-
-  @ApiProperty({ type: 'string', required: true })
-  @Expose()
-  public readonly createdAt: string;
-  @ApiProperty({ type: 'string', required: true, nullable: true })
-  @Expose()
-  public readonly createdById: Nullable<string>;
-  @ApiProperty({ type: 'string', required: true, nullable: true })
-  @Expose()
-  public readonly createdBy: Nullable<string>;
-  @ApiProperty({ type: 'string', required: true })
-  @Expose()
-  public readonly updatedAt: string;
-  @ApiProperty({ type: 'string', required: true, nullable: true })
-  @Expose()
-  public readonly updatedById: Nullable<string>;
-  @ApiProperty({ type: 'string', required: true, nullable: true })
-  @Expose()
-  public readonly updatedBy: Nullable<string>;
-  @ApiProperty({ type: 'string', required: true })
-  @Expose()
-  public readonly deletedAt: string;
-  @ApiProperty({ type: 'string', required: true, nullable: true })
-  @Expose()
-  public readonly deletedById: Nullable<string>;
-  @ApiProperty({ type: 'string', required: true, nullable: true })
-  @Expose()
-  public readonly deletedBy: Nullable<string>;
 }

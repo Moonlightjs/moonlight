@@ -8,6 +8,7 @@ export class CollationTypeInfo {
 
 export class CollationTypeOptions {
   public draftAndPublish: boolean;
+  public softDelete: boolean;
 }
 
 export type CollationTypeAttributeTypeCommon =
