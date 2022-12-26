@@ -34,6 +34,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       ],
       errorFormat: 'colorless',
     });
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     this.$on('query', (e: any) => {
       this.logger.verbose(

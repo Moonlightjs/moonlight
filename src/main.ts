@@ -6,7 +6,7 @@ moduleAlias.addAliases({
   '@src': `${__dirname}`,
 });
 import { ValidationPipe, VersioningType } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import * as httpContext from 'express-http-context';
 import {
   FilterPipe,
@@ -19,7 +19,7 @@ import {
 import { AppModule } from 'src/app.module';
 import { PrismaService } from 'src/infra/prisma/prisma.service';
 import { setupSwagger } from 'src/setup-swagger';
-import path from 'path';
+import { PrismaClientExceptionFilter } from '@src/prisma-client-exception.filter';
 
 console.log(__dirname);
 // set default root folder path
@@ -47,6 +47,9 @@ async function bootstrap() {
   app.enableVersioning({
     type: VersioningType.URI,
   });
+
+  const { httpAdapter } = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
 
   if (isDevelopment()) {
     setupSwagger(app);
