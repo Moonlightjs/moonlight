@@ -7,14 +7,18 @@ import { CreateContentTypeBuilderInput } from '@modules/content-type-builder/dto
 import { UpdateContentTypeBuilderInput } from '@modules/content-type-builder/dto/update-content-type-builder.input';
 import { generateContentTypesModule } from '@modules/content-type-builder/generate-content-type-module';
 import { generateContentTypeSchema } from '@modules/content-type-builder/generate-content-type-schema';
-import { Injectable, OnModuleInit, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  OnModuleInit,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '@src/infra/prisma/prisma.service';
 import { camelCase, paramCase, pascalCase } from 'change-case';
 import { exec, spawn, SpawnOptions } from 'child_process';
 import { readdir, readFile } from 'fs/promises';
 import * as util from 'util';
 import { ContentType } from '@prisma/client';
-
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { MigrateDev } = require('prisma');
 
@@ -45,6 +49,14 @@ const spawnPromise = (
 @Injectable()
 export class ContentTypeBuilderService implements OnModuleInit {
   constructor(protected prisma: PrismaService) {}
+
+  async get() {
+    const data = await this.prisma.contentType.findFirst();
+    if (!(data && data.contentTypesSchema)) {
+      throw new NotFoundException();
+    }
+    return data.contentTypesSchema;
+  }
 
   async onModuleInit() {
     const rootFolder = process.env.ROOT_FOLDER as string;
@@ -165,6 +177,17 @@ export class ContentTypeBuilderService implements OnModuleInit {
     data = await this.process(uid, contentType, contentTypesSchema, data);
 
     return data;
+  }
+
+  async delete(uid: string) {
+    const data = await this.prisma.contentType.findFirst();
+    if (!(data && data.contentTypesSchema)) {
+      throw new BadRequestException();
+    }
+    const contentTypesSchema: Record<string, CollationType> =
+      data.contentTypesSchema as unknown as Record<string, CollationType>;
+
+    await this.handleDelete(uid, contentTypesSchema, data);
   }
 
   async process(
@@ -357,6 +380,69 @@ export class ContentTypeBuilderService implements OnModuleInit {
     //     resolve(null);
     //   });
     // });
+    return result;
+  }
+
+  async handleDelete(
+    uid: string,
+    contentTypesSchema: Record<string, CollationType>,
+    data: ContentType | null,
+  ) {
+    let result = data;
+    const contentType = contentTypesSchema[uid];
+    Object.keys(contentType.attributes).forEach((attributeName) => {
+      const attribute = contentType.attributes[attributeName];
+      if (attribute.type === 'relation') {
+        const attrRelation = attribute as CollationTypeAttributeRelationInverse;
+        attrRelation.inversedBy = attributeName;
+        const target = contentTypesSchema[attrRelation.target];
+        if (!target)
+          throw new BadRequestException(
+            `${attrRelation.target} does not exist`,
+          );
+        delete target.attributes[attrRelation.targetAttribute];
+      }
+    });
+    delete contentTypesSchema[uid];
+    if (result) {
+      result.contentTypesSchema = contentTypesSchema as any;
+      await this.prisma.contentType.update({
+        where: {
+          id: result.id,
+        },
+        data: {
+          contentTypesSchema: contentTypesSchema as any,
+        },
+      });
+    } else {
+      result = await this.prisma.contentType.create({
+        data: {
+          contentTypesSchema: contentTypesSchema as any,
+        },
+      });
+    }
+
+    generateContentTypeSchema(contentTypesSchema);
+    generateContentTypesModule(contentTypesSchema);
+
+    const rootFolder = process.env.ROOT_FOLDER as string;
+
+    const execAurora = await execPromise(`cd ${rootFolder} && npm run aurora`);
+
+    console.log('stdout:', execAurora.stdout);
+    console.log('stderr:', execAurora.stderr);
+
+    const migrateDev = MigrateDev.new();
+    await migrateDev.parse([
+      '-n',
+      `create-${paramCase(contentType.collectionName)}-model`,
+      '--force',
+    ]);
+
+    const execFormat = await execPromise(`cd ${rootFolder} && npm run format`);
+
+    console.log('stdout:', execFormat.stdout);
+    console.log('stderr:', execFormat.stderr);
     return result;
   }
 }

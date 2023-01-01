@@ -26,6 +26,12 @@ export class ContentTypeBuilderController {
   ) {}
 
   @ApiResponse({ status: HttpStatus.OK, type: SuccessResponseDto })
+  @Get()
+  get() {
+    return this.contentTypeBuilderService.get();
+  }
+
+  @ApiResponse({ status: HttpStatus.OK, type: SuccessResponseDto })
   @Post()
   create(@Body() createContentTypeBuilderInput: CreateContentTypeBuilderInput) {
     return this.contentTypeBuilderService.create(createContentTypeBuilderInput);
@@ -41,5 +47,11 @@ export class ContentTypeBuilderController {
       uid,
       updateContentTypeBuilderInput,
     );
+  }
+
+  @ApiResponse({ status: HttpStatus.OK, type: SuccessResponseDto })
+  @Delete('/:uid')
+  delete(@Param('uid') uid: string) {
+    return this.contentTypeBuilderService.delete(uid);
   }
 }
