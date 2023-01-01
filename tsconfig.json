@@ -23,5 +23,8 @@
       "@src/*": ["src/*"]
     }
   },
-  "exclude": ["data", "prisma", "dist"]
+  "exclude": ["node_modules","data", "prisma", "dist", "src/content-type"],
+  "watchOptions": {
+    "excludeFiles": ["node_modules", "data", "prisma", "dist", "src/content-type"]
+  }
 }

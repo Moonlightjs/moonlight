@@ -7,6 +7,7 @@ export enum DemoEnumEnum {
   MORNING = 'morning',
   AFTERNOON = 'afternoon',
   EVENING = 'evening',
+  NOON = 'noon',
 }
 
 @Expose()
@@ -76,7 +77,7 @@ export class AdminDemoDto {
   @Expose()
   public readonly enum: Nullable<DemoEnumEnum>;
 
-  @ApiProperty({ type: TestDto, required: false, nullable: false })
+  @ApiProperty({ type: () => TestDto, required: false, nullable: false })
   @Type(() => TestDto)
   @Expose()
   public readonly tests: TestDto;
@@ -108,4 +109,13 @@ export class AdminDemoDto {
   @ApiProperty({ type: 'string', required: true, nullable: true })
   @Expose()
   public readonly updatedBy: Nullable<string>;
+  @ApiProperty({ type: 'string', required: true })
+  @Expose()
+  public readonly deletedAt: string;
+  @ApiProperty({ type: 'string', required: true, nullable: true })
+  @Expose()
+  public readonly deletedById: Nullable<string>;
+  @ApiProperty({ type: 'string', required: true, nullable: true })
+  @Expose()
+  public readonly deletedBy: Nullable<string>;
 }

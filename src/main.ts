@@ -54,8 +54,11 @@ async function bootstrap() {
   if (isDevelopment()) {
     setupSwagger(app);
   }
-  await app.listen(PORT, () =>
-    console.log(`🚀 Server ready at http://localhost:${PORT}`),
-  );
+  await app.listen(PORT, () => {
+    console.log(`🚀 Server ready at http://localhost:${PORT}`);
+    if (isDevelopment()) {
+      console.log(`🚀 Swagger at http://localhost:${PORT}/api/docs`);
+    }
+  });
 }
 bootstrap().then();

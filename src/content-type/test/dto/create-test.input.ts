@@ -51,6 +51,15 @@ export class CreateTestInput {
   @Expose()
   public readonly json: Nullable<any>;
 
+  @ApiProperty({ type: 'string', required: true, nullable: true })
+  @Matches(/^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/)
+  @IsNotEmpty()
+  @MaxLength(255)
+  @MinLength(1)
+  @IsString()
+  @Expose()
+  public readonly name: string;
+
   @ApiProperty({ type: 'string', required: false, nullable: false })
   @IsDateStringISO()
   @IsOptional()
@@ -114,13 +123,4 @@ export class CreateTestInput {
   @IsOptional()
   @Expose()
   public readonly richText: Nullable<string>;
-
-  @ApiProperty({ type: 'string', required: true, nullable: true })
-  @Matches(/^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/)
-  @IsNotEmpty()
-  @MaxLength(255)
-  @MinLength(1)
-  @IsString()
-  @Expose()
-  public readonly shortText: string;
 }

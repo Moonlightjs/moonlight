@@ -15,7 +15,7 @@ export class TestDto {
   public readonly date: Nullable<string>;
 
   @ApiProperty({
-    type: DemoDto,
+    type: () => DemoDto,
     required: false,
     nullable: false,
     isArray: true,

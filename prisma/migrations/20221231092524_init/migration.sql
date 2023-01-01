@@ -2,6 +2,23 @@
 CREATE TYPE "UserAttributeType" AS ENUM ('INTEGER', 'DECIMAL', 'VARCHAR', 'TEXT', 'DATETIME', 'BOOLEAN');
 
 -- CreateTable
+CREATE TABLE "ContentType" (
+    "id" UUID NOT NULL,
+    "contentTypesSchema" JSONB NOT NULL,
+    "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdById" UUID,
+    "createdBy" TEXT,
+    "updatedAt" TIMESTAMPTZ NOT NULL,
+    "updatedById" UUID,
+    "updatedBy" TEXT,
+    "deletedAt" TIMESTAMPTZ,
+    "deletedById" UUID,
+    "deletedBy" TEXT,
+
+    CONSTRAINT "ContentType_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "AdminUser" (
     "id" UUID NOT NULL,
     "username" VARCHAR(100) NOT NULL,
@@ -73,6 +90,7 @@ CREATE TABLE "AdminRole" (
     "name" VARCHAR(100) NOT NULL,
     "code" VARCHAR(100) NOT NULL,
     "description" VARCHAR(100),
+    "isSystem" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdById" UUID,
     "createdBy" TEXT,
@@ -93,6 +111,7 @@ CREATE TABLE "AdminPermission" (
     "subject" VARCHAR(100),
     "properties" JSONB,
     "conditions" JSONB,
+    "isSystem" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdById" UUID,
     "createdBy" TEXT,

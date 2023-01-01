@@ -18,7 +18,6 @@ export const generateContentTypeSchema = (
   contentTypesSchema: Record<string, CollationType>,
 ) => {
   const rootFolder = process.env.ROOT_FOLDER;
-  console.log(rootFolder);
   try {
     // remove schema file if it exists
     fs.removeSync(`${rootFolder}/prisma/schemas/content-type-builder.prisma`);

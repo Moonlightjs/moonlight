@@ -20,7 +20,7 @@ export class AdminTestDto {
   public readonly date: Nullable<string>;
 
   @ApiProperty({
-    type: DemoDto,
+    type: () => DemoDto,
     required: false,
     nullable: false,
     isArray: true,
@@ -41,6 +41,10 @@ export class AdminTestDto {
   @ApiProperty({ type: 'object', required: false, nullable: false })
   @Expose()
   public readonly json: Nullable<any>;
+
+  @ApiProperty({ type: 'string', required: true, nullable: true })
+  @Expose()
+  public readonly name: string;
 
   @ApiProperty({ type: 'string', required: false, nullable: false })
   @Expose()
@@ -81,10 +85,6 @@ export class AdminTestDto {
   @ApiProperty({ type: 'string', required: false, nullable: false })
   @Expose()
   public readonly richText: Nullable<string>;
-
-  @ApiProperty({ type: 'string', required: true, nullable: true })
-  @Expose()
-  public readonly shortText: string;
 
   @ApiProperty({ type: 'string', required: true })
   @Expose()

@@ -59,8 +59,12 @@ export class DemoDto {
   @Expose()
   public readonly enum: Nullable<DemoEnumEnum>;
 
-  @ApiProperty({ type: TestDto, required: false, nullable: false })
+  @ApiProperty({ type: () => TestDto, required: false, nullable: false })
   @Type(() => TestDto)
   @Expose()
   public readonly tests: TestDto;
+
+  @ApiProperty({ type: 'string', required: true })
+  @Expose()
+  public readonly publishedAt: string;
 }

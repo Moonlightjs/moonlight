@@ -47,6 +47,14 @@ const generateContentTypeModule = (
       recursive: true,
     },
   );
+  fs.mkdirSync(
+    `${rootFolder}/src/content-type/${paramCase(
+      contentType.collectionName,
+    )}/content-types`,
+    {
+      recursive: true,
+    },
+  );
   fs.writeFileSync(
     `${rootFolder}/src/content-type/${paramCase(
       contentType.collectionName,
@@ -155,6 +163,15 @@ const generateContentTypeModule = (
       encoding: 'utf-8',
     },
   );
+  fs.writeFileSync(
+    `${rootFolder}/src/content-type/${paramCase(
+      contentType.collectionName,
+    )}/content-types/schema.json`,
+    JSON.stringify(contentType),
+    {
+      encoding: 'utf-8',
+    },
+  );
   const appModulePath = path.join(rootFolder, 'src/app.module.ts');
   let appModuleContent = fs.readFileSync(appModulePath, {
     encoding: 'utf8',
@@ -204,7 +221,6 @@ const generateContentTypeModule = (
         appModuleContent.slice(appModuleContent.indexOf(t[0]) + t[0].length);
     }
   }
-  console.log(appModuleContent);
   fs.writeFileSync(`${appModulePath}`, appModuleContent, {
     encoding: 'utf-8',
   });
@@ -1392,7 +1408,7 @@ const generateOpenApiType = (
     case 'relation':
       const attrRelation = attribute as CollationTypeAttributeRelationInverse;
       const target = contentTypesSchema[attrRelation.target];
-      return isDto ? `${pascalCase(target.collectionName)}Dto` : '';
+      return isDto ? `() => ${pascalCase(target.collectionName)}Dto` : '';
     default:
       throw new BadRequestException(
         `Current attribute type ${attribute.type} is not supported`,

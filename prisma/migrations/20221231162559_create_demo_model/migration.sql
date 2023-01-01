@@ -18,6 +18,10 @@ CREATE TABLE "Demo" (
     "boolean" BOOLEAN,
     "json" JSONB,
     "enum" "DemoEnum",
+    "testId" UUID,
+    "publishedAt" TIMESTAMPTZ,
+    "publishedById" UUID,
+    "publishedBy" TEXT,
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdById" UUID,
     "createdBy" TEXT,
@@ -33,3 +37,6 @@ CREATE TABLE "Demo" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Demo_shortText_key" ON "Demo"("shortText");
+
+-- AddForeignKey
+ALTER TABLE "Demo" ADD CONSTRAINT "Demo_testId_fkey" FOREIGN KEY ("testId") REFERENCES "Test"("id") ON DELETE SET NULL ON UPDATE CASCADE;
