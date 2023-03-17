@@ -1,32 +1,70 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AdminAuthenticationModule } from '@moonlightjs/admin-user-module/modules/admin-authentication/admin-authentication.module';
-import { AdminPermissionsGuard } from '@moonlightjs/admin-user-module/modules/admin-authorization/permission';
-import { AdminAuthorizationModule } from '@moonlightjs/admin-user-module/modules/admin-authorization/admin-authorization.module';
-import { AdminRolesGuard } from '@moonlightjs/admin-user-module/modules/admin-authorization/role';
-import { AdminUserModule } from '@moonlightjs/admin-user-module/modules/admin-user/admin-user.module';
+import {
+  AdminAuthenticationModule,
+  AdminAuthorizationModule,
+  AdminPermissionsGuard,
+  AdminRolesGuard,
+  AdminUserModule,
+} from '@moonlightjs/admin-user-module/modules';
 import { APP_GUARD } from '@nestjs/core';
-import { PrismaService } from 'src/infra/prisma/prisma.service';
-import { ContentTypeBuilderModule } from './modules/content-type-builder/content-type-builder.module';
+import {
+  ContentTypeBuilderModule,
+  ModuleLoaderModule,
+} from '@moonlightjs/content-type-builder-module';
 import { ConfigModule } from '@nestjs/config';
-import { TestModule } from '@content-type/test/test.module';
-// import { DemoModule } from '@content-type/demo/demo.module';
+import { logQueryEvent, PrismaModule } from '@moonlightjs/common';
+import * as path from 'path';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    PrismaModule.forRoot({
+      isGlobal: true,
+      prismaServiceOptions: {
+        prismaOptions: {
+          log: [
+            {
+              emit: 'event',
+              level: 'query',
+            },
+            {
+              emit: 'stdout',
+              level: 'error',
+            },
+            {
+              emit: 'stdout',
+              level: 'info',
+            },
+            {
+              emit: 'stdout',
+              level: 'warn',
+            },
+          ],
+          errorFormat: 'colorless',
+        },
+        events: {
+          query: logQueryEvent,
+        },
+      },
+    }),
     AdminAuthenticationModule,
     AdminAuthorizationModule,
     AdminUserModule,
     ContentTypeBuilderModule,
-    TestModule,
-    // DemoModule,
+    ModuleLoaderModule.register({
+      name: 'content-type',
+      /**
+       * Make sure the path resolves to the **DIST** subdirectory, (we are no longer in TS land but JS land!)
+       */
+      path: path.resolve(__dirname, './content-type'),
+      fileSpec: '**/*.module{.ts,.js}',
+    }),
   ],
   controllers: [AppController],
   providers: [
     AppService,
-    PrismaService,
     {
       provide: APP_GUARD,
       useClass: AdminRolesGuard,

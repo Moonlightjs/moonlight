@@ -31,9 +31,9 @@ import { UpdateAdminTestInput } from './dto/update-admin-test.input';
 import { CreateAdminTestInput } from './dto/create-admin-test.input';
 import { AdminTestDto } from './dto/admin-test.dto';
 
-@ApiTags('admin-test')
+@ApiTags('admin-content-type-test')
 @Controller({
-  path: 'admin/test',
+  path: 'admin/content-type/test',
   version: '1',
 })
 // @UseGuards(JwtAuthGuard)

@@ -6,7 +6,7 @@ import {
   toDto,
   HttpErrorException,
 } from '@moonlightjs/common';
-import { PrismaService } from '@src/infra/prisma/prisma.service';
+import { PrismaService } from '@moonlightjs/common';
 import { DemoDto } from './dto/demo.dto';
 import { UpdateDemoInput } from './dto/update-demo.input';
 import { CreateDemoInput } from './dto/create-demo.input';

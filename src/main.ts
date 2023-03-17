@@ -13,19 +13,15 @@ import {
   GlobalApiLoggerMiddleware,
   GlobalExceptionFilter,
   isDevelopment,
+  PrismaClientExceptionFilter,
+  PrismaService,
   ResponseInterceptor,
   TransformInterceptor,
 } from '@moonlightjs/common';
 import { AppModule } from 'src/app.module';
-import { PrismaService } from 'src/infra/prisma/prisma.service';
 import { setupSwagger } from 'src/setup-swagger';
-import { PrismaClientExceptionFilter } from '@src/prisma-client-exception.filter';
 
-console.log(__dirname);
-// set default root folder path
-process.env.ROOT_FOLDER =
-  process.env.ROOT_FOLDER ?? __dirname.replace('/dist/src', '');
-console.log(process.env.ROOT_FOLDER);
+console.log(process.env.INIT_CWD);
 
 const PORT = process.env.PORT || 1999;
 async function bootstrap() {
